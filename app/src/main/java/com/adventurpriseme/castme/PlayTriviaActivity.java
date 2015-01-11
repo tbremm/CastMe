@@ -164,7 +164,7 @@ public class PlayTriviaActivity
 				m_CCastChannel = new CCastChannel (this);
 				LaunchOptions m_LaunchOptions = new LaunchOptions ();
 				m_LaunchOptions.setRelaunchIfRunning (false);
-				Cast.CastApi.launchApplication (m_ApiClient, "53EAA363", m_LaunchOptions)
+				Cast.CastApi.launchApplication (m_ApiClient, getString(R.string.cast_app_id), m_LaunchOptions)
 					.setResultCallback (new ResultCallback<Cast.ApplicationConnectionResult> ()
 					{
 					@Override

@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.adventurpriseme.castme.GameInstanceMgr.IGamesMgr2Game;
 import com.adventurpriseme.castme.GamesManager.IGame2GamesMgr;
-import com.adventurpriseme.castme.PlayTriviaActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +48,7 @@ public class CTriviaGame
 	private final        String   TAG                  = "CTriviaGame";
 	private IGame2GamesMgr     m_gamesMgr;  // Games manager
 	// The caller's context
-	private PlayTriviaActivity m_activity;
+	private ITriviaGame m_activity;
 	private String             m_strMsgIn;
 	private ArrayList<String>  m_strMsgOut;
 	private String             m_question;
@@ -60,7 +59,17 @@ public class CTriviaGame
 		{
 		m_gamesMgr = gamesMgr;
 		m_strMsgOut = new ArrayList<String> ();    // TODO: Make this dependent on the type of question expected
-		m_activity = (PlayTriviaActivity) gamesMgr.getActivity ();
+		m_activity = (ITriviaGame) gamesMgr.getActivity ();
+		m_question = "";
+		m_answers = new ArrayList<String> ();
+		setGameState (WAITING);
+		}
+
+	public CTriviaGame (ITriviaGame iTriviaGame)
+		{
+		m_gamesMgr = null;
+		m_strMsgOut = new ArrayList<String> ();    // TODO: Make this dependent on the type of question expected
+		m_activity = iTriviaGame;
 		m_question = "";
 		m_answers = new ArrayList<String> ();
 		setGameState (WAITING);

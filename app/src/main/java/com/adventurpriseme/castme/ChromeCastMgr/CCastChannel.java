@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.adventurpriseme.castme.PlayTriviaActivity;
+import com.adventurpriseme.castme.R;
 import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.CastDevice;
 
@@ -35,7 +36,7 @@ public class CCastChannel
 
 	public String getNamespace ()
 		{
-		return "urn:x-cast:com.adventurpriseme.castme";
+		return getString(R.string.cast_namespace);
 		}
 
 	@Override

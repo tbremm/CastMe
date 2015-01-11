@@ -247,7 +247,8 @@
 			            m_hostID = "";
 			            }
 
-			        m_players = m_players.splice (ind, 1);
+					// Splice returns the part we're chopping off
+			        m_players.splice (ind, 1);
 
 			        // Reset game state if player list is now empty or if host disconnects
                     if (m_players.length == 0)
@@ -283,7 +284,7 @@
 								name: "",
 								answer: ""
 								});
-					
+
 					// Add the player to the game depending on game state
 					switch (m_gameState)
 						{
@@ -390,7 +391,7 @@
 							{
 							var new_ind = getPlayerIndexById (senderId);	// replace old sender ID on reconnects with new sender ID
 							var old_ind = getPlayerIndexById (value);
-							if (getPlayerIndex != -1) 
+							if (getPlayerIndex != -1)
 								{
 								m_players[old_ind].id = m_players[new_ind].id; 	// update senderID for new reconnects
 								m_players.splice(new_ind);						// remove new one

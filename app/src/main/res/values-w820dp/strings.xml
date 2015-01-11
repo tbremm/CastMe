@@ -3,4 +3,5 @@
 	<string name="cd_playgame">Click this to play</string>
 	<string name="cast_namespace">urn:x-cast:com.adventurpriseme.castme</string>
 	<string name="cast_app_id">53EAA363</string>
+	<string name="ccl_trivia">CCL Trivia</string>
 </resources>

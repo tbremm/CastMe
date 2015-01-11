@@ -19,13 +19,13 @@ import android.widget.TextView;
 import com.adventurpriseme.castme.CAboutDialog;
 import com.adventurpriseme.castme.CTriviaPlayer;
 import com.adventurpriseme.castme.GamesManager.CGamesManager;
+import com.adventurpriseme.castme.MainApplication;
 import com.adventurpriseme.castme.R;
 import com.adventurpriseme.castme.TheCastManager.CDataCastConsumer;
 import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
 import com.adventurpriseme.castme.TriviaGame.ETriviaGameStates;
 import com.adventurpriseme.castme.TriviaGame.ITriviaGame;
 import com.adventurpriseme.castme.TriviaGame.TriviaPrefsActivity;
-import com.google.sample.castcompanionlibrary.cast.DataCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 
@@ -36,7 +36,6 @@ public class CCLTriviaActivity
 	extends ActionBarActivity
 	implements ITriviaGame
 	{
-	private static DataCastManager   sm_dataCastManager;
 	private        CDataCastConsumer m_cDataCastConsumer;
 	private        CGamesManager     m_GamesMgr;
 	private        CTriviaGame       m_cTriviaGame;
@@ -47,8 +46,7 @@ public class CCLTriviaActivity
 	protected void onCreate (Bundle savedInstanceState)
 		{
 		super.onCreate (savedInstanceState);
-		initCastManager ();
-		sm_dataCastManager.reconnectSessionIfPossible ();   // Default is 10 seconds
+		MainApplication.getDataCastManager().reconnectSessionIfPossible ();   // Default is 10 seconds
 		m_cDataCastConsumer = new CDataCastConsumer ();
 		setContentView (R.layout.activity_ccltrivia);
 		}
@@ -63,29 +61,13 @@ public class CCLTriviaActivity
 		m_cTriviaGame = new CTriviaGame (this);
 		}
 
-	private void initCastManager ()
-		{
-		sm_dataCastManager = DataCastManager.initialize (getApplicationContext (), getString (R.string.cast_app_id), getString (R.string.cast_namespace));
-		sm_dataCastManager.enableFeatures (DataCastManager.FEATURE_DEBUGGING |
-		                                  DataCastManager.FEATURE_WIFI_RECONNECT);
-		}
-
-	public static DataCastManager getDataCastManager ()
-		{
-		if (sm_dataCastManager == null)
-			{
-			throw new IllegalStateException ("Application has not been started");
-			}
-		return sm_dataCastManager;
-		}
-
 	@Override
 	public boolean onCreateOptionsMenu (Menu menu)
 		{
 		super.onCreateOptionsMenu (menu);
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater ().inflate (R.menu.menu_ccltrivia, menu);
-		sm_dataCastManager.addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
+		MainApplication.getDataCastManager().addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
 		return true;
 		}
 
@@ -102,7 +84,6 @@ public class CCLTriviaActivity
 			case R.id.action_settings:
 				onSettingsSelected ();
 				return true;
-
 			case R.id.home:
 				// This ID represents the Home or Up button. In the case of this
 				// activity, the Up button is shown. Use NavUtils to allow users
@@ -113,7 +94,6 @@ public class CCLTriviaActivity
 				//
 				NavUtils.navigateUpFromSameTask (this);
 				return true;
-
 			case R.id.action_about:
 				// Show an about dialog box with version info
 				CAboutDialog.Show (CCLTriviaActivity.this);
@@ -137,19 +117,22 @@ public class CCLTriviaActivity
 	public void onResume ()
 		{
 		super.onResume ();
-		getDataCastManager ();
-		sm_dataCastManager.incrementUiCounter ();
+		MainApplication.getDataCastManager ();
+		MainApplication.getDataCastManager().incrementUiCounter ();
 		}
 
 	@Override
 	public void onPause ()
 		{
 		super.onPause ();
-		sm_dataCastManager.decrementUiCounter ();
+		MainApplication.getDataCastManager().decrementUiCounter ();
 		}
-	/*********************************************************************
+
+	/**
+	 * ******************************************************************
 	 * Game play code
-	 *********************************************************************/
+	 * *******************************************************************
+	 */
 	public void updateUI (ETriviaGameStates state)
 		{
 		// Get all of our GUI elements
@@ -328,7 +311,7 @@ public class CCLTriviaActivity
 		{
 		try
 			{
-			sm_dataCastManager.sendDataMessage (message, getString (R.string.cast_namespace));
+			MainApplication.getDataCastManager().sendDataMessage (message, getString (R.string.cast_namespace));
 			}
 		catch (IOException e)
 			{
@@ -389,7 +372,6 @@ public class CCLTriviaActivity
 		{
 		return m_cTriviaPlayer;
 		}
-
 	/*********************************************************************
 	 * Helper classes and functions
 	 *********************************************************************/

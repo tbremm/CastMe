@@ -10,11 +10,13 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity;
+
 public class MainActivity
 	extends ActionBarActivity
 	{
 	public static final  String   TAG       = "CastMe Main Activity";
-	private static final String[] GRID_DATA = new String[] {"Trivia"};
+	private static final String[] GRID_DATA = new String[] {"Trivia", "CCL Trivia"};
 	private GridView m_gridView;
 
 	@Override
@@ -40,12 +42,21 @@ public class MainActivity
 				case 0:
 					playGame_Trivia ();
 					break;
+				case 1:
+					doCCLTriviaActivity ();
+					break;
 				default:
 					Log.e (TAG, "ERROR: Unhandled grid selection...");
 					break;
 				}
 			}
 		});
+		}
+
+	private void doCCLTriviaActivity ()
+		{
+		Intent intent = new Intent (this, CCLTriviaActivity.class);
+		startActivity (intent);
 		}
 
 	@Override

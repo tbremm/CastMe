@@ -46,5 +46,6 @@
 	<string name="config_host_postround_timer_enable">pref_host_checkbox_postround_timer</string>
 	<string name="cast_namespace">urn:x-cast:com.adventurpriseme.castme</string>
 	<string name="cast_app_id">53EAA363</string>
+	<string name="ccl_trivia">CCL Trivia</string>
 
 </resources>

@@ -26,6 +26,7 @@ import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
 import com.adventurpriseme.castme.TriviaGame.ETriviaGameStates;
 import com.adventurpriseme.castme.TriviaGame.ITriviaGame;
 import com.adventurpriseme.castme.TriviaGame.TriviaPrefsActivity;
+import com.google.sample.castcompanionlibrary.cast.DataCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
 
@@ -46,9 +47,10 @@ public class CCLTriviaActivity
 	protected void onCreate (Bundle savedInstanceState)
 		{
 		super.onCreate (savedInstanceState);
+		DataCastManager.checkGooglePlayServices (this);
+		chooseActivityContentView ();
 		MainApplication.getDataCastManager().reconnectSessionIfPossible ();   // Default is 10 seconds
 		m_cDataCastConsumer = new CDataCastConsumer ();
-		setContentView (R.layout.activity_ccltrivia);
 		}
 
 	@Override
@@ -67,7 +69,7 @@ public class CCLTriviaActivity
 		super.onCreateOptionsMenu (menu);
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater ().inflate (R.menu.menu_ccltrivia, menu);
-		MainApplication.getDataCastManager().addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
+		MainApplication.getDataCastManager ().addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
 		return true;
 		}
 
@@ -119,6 +121,7 @@ public class CCLTriviaActivity
 		super.onResume ();
 		MainApplication.getDataCastManager ();
 		MainApplication.getDataCastManager().incrementUiCounter ();
+		chooseActivityContentView ();
 		}
 
 	@Override
@@ -415,6 +418,19 @@ public class CCLTriviaActivity
 				m_cTriviaGame.sendMessage (m_cTriviaPlayer.getAnswer ());                          // Send the answer to the game server
 				}
 			});
+			}
+		}
+
+	private void chooseActivityContentView ()
+		{
+		// Set the activity layout dependant on our connected state
+		if (MainApplication.getDataCastManager () == null || MainApplication.getDataCastManager ().isConnected () == false)
+			{
+			setContentView (R.layout.activity_ccltrivia);
+			}
+		else
+			{
+			setContentView (R.layout.activity_play_trivia_on);
 			}
 		}
 	}

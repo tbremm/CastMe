@@ -4,4 +4,9 @@
 	<string name="cast_namespace">urn:x-cast:com.adventurpriseme.castme</string>
 	<string name="cast_app_id">53EAA363</string>
 	<string name="ccl_trivia">CCL Trivia</string>
+	<string name="prefs_header_application_summary">Control how the application behaves on the TV</string>
+	<string name="version">CastMe Games: %1$s, CCL: %2$s</string>
+	<string name="oops">Oops</string>
+	<string name="connection_lost_retry">Connection to the cast device has been temporarily lost. Application is trying to recover connection, please try again later</string>
+	<string name="about_castme_games">About CastMe Games</string>
 </resources>

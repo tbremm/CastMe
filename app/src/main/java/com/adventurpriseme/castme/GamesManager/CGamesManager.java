@@ -6,6 +6,7 @@ import android.util.Log;
 import com.adventurpriseme.castme.CommsMgr.IGames2Comms;
 import com.adventurpriseme.castme.GameInstanceMgr.IGamesMgr2Game;
 import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
+import com.adventurpriseme.castme.TriviaGame.ITriviaGame;
 
 /**
  * Manages the game instance and implements communication with the cast interface.
@@ -46,7 +47,7 @@ public class CGamesManager
 		switch (eGame)
 			{
 			case TRIVIA:
-				m_GameInstance = new CTriviaGame (this);
+				m_GameInstance = new CTriviaGame ((ITriviaGame)m_activity);
 				break;
 			default:
 				Log.e (TAG, "ERROR: Unsupported game selected...");

@@ -3,7 +3,6 @@ package com.adventurpriseme.castme.TriviaGame;
 import android.util.Log;
 
 import com.adventurpriseme.castme.GameInstanceMgr.IGamesMgr2Game;
-import com.adventurpriseme.castme.GamesManager.IGame2GamesMgr;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +45,6 @@ public class CTriviaGame
 	private static final String[] Q_AND_A_STRING_ARRAY = new String[5];   // TODO: Don't hardcode this size
 	// Private data members
 	private final        String   TAG                  = "CTriviaGame";
-	private IGame2GamesMgr     m_gamesMgr;  // Games manager
 	// The caller's context
 	private ITriviaGame m_activity;
 	private String             m_strMsgIn;
@@ -55,19 +53,8 @@ public class CTriviaGame
 	private ArrayList<String>  m_answers;
 	private ETriviaGameStates m_eTriviaGameState;
 
-	public CTriviaGame (IGame2GamesMgr gamesMgr)
-		{
-		m_gamesMgr = gamesMgr;
-		m_strMsgOut = new ArrayList<String> ();    // TODO: Make this dependent on the type of question expected
-		m_activity = (ITriviaGame) gamesMgr.getActivity ();
-		m_question = "";
-		m_answers = new ArrayList<String> ();
-		setGameState (WAITING);
-		}
-
 	public CTriviaGame (ITriviaGame iTriviaGame)
 		{
-		m_gamesMgr = null;
 		m_strMsgOut = new ArrayList<String> ();    // TODO: Make this dependent on the type of question expected
 		m_activity = iTriviaGame;
 		m_question = "";

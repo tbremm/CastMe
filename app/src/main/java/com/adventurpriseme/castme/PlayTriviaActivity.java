@@ -31,6 +31,7 @@ import com.adventurpriseme.castme.GamesManager.CGamesManager;
 import com.adventurpriseme.castme.GamesManager.ESupportedGames;
 import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
 import com.adventurpriseme.castme.TriviaGame.ETriviaGameStates;
+import com.adventurpriseme.castme.TriviaGame.ITriviaGame;
 import com.adventurpriseme.castme.TriviaGame.TriviaPrefsActivity;
 import com.google.android.gms.cast.ApplicationMetadata;
 import com.google.android.gms.cast.Cast;
@@ -55,7 +56,7 @@ import java.util.List;
  */
 public class PlayTriviaActivity
 	extends ActionBarActivity
-	implements IChromeCastMessage, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Cast.MessageReceivedCallback
+	implements IChromeCastMessage, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, Cast.MessageReceivedCallback, ITriviaGame
 	{
 	private static final String   TAG                = "Trivia Activity";
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];

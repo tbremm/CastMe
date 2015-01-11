@@ -30,14 +30,13 @@
 	<string name="you_win">You win!</string>
 	<string name="time_is_up">Time\'s Up!</string>
 	<string name="you_lose">You lose!</string>
-	<string name="pref_title_enable_debug">Enable debug options</string>
 	<string name="btn_text_host_game">Host game</string>
 	<string name="waiting_on_host">Waiting on host…</string>
 	<string name="action_about">About</string>
 	<string name="about">CastMe&#8482; Trivia\nCopyright &#169; 2014\n\nhttp://adventurpriseme.com\nsupport@adventurpriseme.com</string>
 	<string name="start_the_game">Start the game!</string>
 	<string name="next_question">Next Question!</string>
-	<string name="waiting_for_host">Waiting for host...</string>
+	<string name="waiting_for_host">Waiting for host…</string>
 	<string name="finish_round">Finish round</string>
 	<string name="playTrivia">Play Trivia!</string>
 	<string name="btn_new_round">New Round!</string>
@@ -48,4 +47,38 @@
 	<string name="cast_app_id">53EAA363</string>
 	<string name="ccl_trivia">CCL Trivia</string>
 
+	<!-- Preferences -->
+	<string name="pref_title_enable_debug">Enable debug options</string>
+
+	<!-- Application Preferences -->
+	<string name="prefs_header_application">Application Behavior</string>
+	<string name="prefs_header_application_summary">Control how the application behaves on the TV</string>
+	<string name="prefs_termination_policy_default">0</string>
+	<string name="prefs_termination_policy_dialog_title">When Disconnecting</string>
+	<string name="prefs_volume_title">Volume Assignment</string>
+	<string name="prefs_volume_title_summary">Controls %1$s</string>
+	<string name="prefs_volume_dialog_title">Volume Assignment</string>
+	<string name="prefs_volume_default">device</string>
+	<string name="version">CastMe Games: %1$s, CCL: %2$s</string>
+
+	<!-- Error messages -->
+	<string name="failed_to_set_volume">Failed to set the volume</string>
+	<string name="failed_to_launch_app">Failed to launch application</string>
+	<string name="failed_to_set_mute">Failed to adjust the volume mute</string>
+	<string name="failed_to_find_app">The application you are trying to launch is not available on your Chromecast device</string>
+	<string name="failed_app_launch_timeout">The request to launch the application has timed out!</string>
+	<string name="failed_to_play">Failed to start the playback of media</string>
+	<string name="failed_to_pause">Failed to pause the playback of media</string>
+	<string name="failed_to_connect">Could not connect to the device</string>
+	<string name="failed_to_seek">Failed to seek to the specified position on the remote device</string>
+	<string name="video_error_media_load_timeout">Media loading timed out</string>
+	<string name="video_error_server_inaccessible">Media server was not reachable</string>
+	<string name="video_error_unknown_error">Failed to load video</string>
+	<string name="connection_temp_lost">Connection to the cast device is temporarily lost</string>
+	<string name="connection_recovered">Connection to the cast device is recovered</string>
+	<string name="connection_lost_retry">Connection to the cast device has been temporarily lost. Application is trying to recover connection, please try again later</string>
+	<string name="connection_lost">No connection to the cast device exist</string>
+	<string name="failed_to_perform_action">Sorry, ran into issues performing the task you wanted</string>
+	<string name="oops">Oops</string>
+	<string name="about_castme_games">About CastMe Games</string>
 </resources>

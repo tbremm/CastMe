@@ -758,6 +758,23 @@ public class PlayTriviaActivity
 		{
 		private final String TAG = "My Media Router Callback";
 
+		/**
+		 * Called when the user selects the disconnect button in the media router menu
+		 *
+		 * Currently set to disconnect and reset the view to the disconnected state.
+		 *
+		 * @param router
+		 * @param route
+		 */
+		@Override
+		public void onRouteUnselected(MediaRouter router, MediaRouter.RouteInfo route)
+			{
+			Log.d(TAG, "onRouteUnselected: route=" + route);
+
+			m_ApiClient.disconnect ();
+			chooseActivityContentView ();
+			}
+
 		@Override
 		public void onRouteSelected (MediaRouter router, MediaRouter.RouteInfo info)
 			{

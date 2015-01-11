@@ -290,8 +290,8 @@
 						{
 						case GAME_PENDING:
 							{
-							// If this is the first player, initialize the game
-							if (m_players.length == 1)
+							// If this is the first player, or if there is no host
+							if (m_players.length == 1 || m_hostID == "")
                                 {
                                 resetRound ();
                                 setGamePending();

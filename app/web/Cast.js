@@ -60,7 +60,7 @@
             };
 
             // create a CastMessageBus to handle messages for a custom namespace
-            window.messageBus = window.castReceiverManager.getCastMessageBus ('urn:x-cast:com.adventurpriseme.tcast');
+            window.messageBus = window.castReceiverManager.getCastMessageBus ('urn:x-cast:com.adventurpriseme.castme');
 
             // **********************************************
             // handler for the CastMessageBus message event

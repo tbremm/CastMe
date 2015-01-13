@@ -13,6 +13,7 @@ package com.adventurpriseme.castme.CommsMgr;
 public enum ECommChannelTypes
 	{
 		CHROMECAST,
+		CCL,
 		// Google Chromecast
 		NUM_SUPPORTED_COMM_TYPES    // This must always be last in the list
 	}

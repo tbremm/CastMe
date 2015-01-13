@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 
 import com.adventurpriseme.castme.CAboutDialog;
 import com.adventurpriseme.castme.CTriviaPlayer;
-import com.adventurpriseme.castme.GamesManager.CGamesManager;
 import com.adventurpriseme.castme.MainApplication;
 import com.adventurpriseme.castme.R;
 import com.adventurpriseme.castme.TheCastManager.CDataCastConsumer;
@@ -26,6 +26,7 @@ import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
 import com.adventurpriseme.castme.TriviaGame.ETriviaGameStates;
 import com.adventurpriseme.castme.TriviaGame.ITriviaGame;
 import com.adventurpriseme.castme.TriviaGame.TriviaPrefsActivity;
+import com.google.android.gms.cast.CastDevice;
 import com.google.sample.castcompanionlibrary.cast.DataCastManager;
 import com.google.sample.castcompanionlibrary.cast.exceptions.NoConnectionException;
 import com.google.sample.castcompanionlibrary.cast.exceptions.TransientNetworkDisconnectionException;
@@ -37,51 +38,88 @@ public class CCLTriviaActivity
 	extends ActionBarActivity
 	implements ITriviaGame
 	{
-	private        CDataCastConsumer m_cDataCastConsumer;
-	private        CGamesManager     m_GamesMgr;
-	private        CTriviaGame       m_cTriviaGame;
-	private        CTriviaPlayer     m_cTriviaPlayer;
-	private        SharedPreferences m_sharedPreferences;
+	private static final String                              TAG                  = "CCLTriviaActivity";
+	private              DataCastManager                     m_dataCastManager    = null;
+	private              CDataCastConsumer                   m_dataCastConsumer   = null;
+	private              MenuItem                            m_mediaRouteMenuItem = null;
+	private              CTriviaGame                         m_cTriviaGame        = null;
+	private              CTriviaPlayer                       m_cTriviaPlayer      = null;
+	private              SharedPreferences                   m_sharedPreferences  = null;
+	private              CDataCastConsumer.eConnectionStates m_eConnectionState   = CDataCastConsumer.eConnectionStates.E_CONNECTION_STATE_UNKNOWN;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState)
 		{
 		super.onCreate (savedInstanceState);
 		DataCastManager.checkGooglePlayServices (this);
-		chooseActivityContentView ();
-		MainApplication.getDataCastManager().reconnectSessionIfPossible ();   // Default is 10 seconds
-		m_cDataCastConsumer = new CDataCastConsumer ();
-		}
-
-	@Override
-	protected void onPostCreate (Bundle savedInstanceState)
-		{
-		super.onPostCreate (savedInstanceState);
+		setContentView (R.layout.activity_ccltrivia);   // Init the view... after this, the DataCastConsumer should handle it for us
 		m_sharedPreferences = PreferenceManager.getDefaultSharedPreferences (this);
 		m_cTriviaPlayer = new CTriviaPlayer (this);
 		// FIXME: Fix game creation so that it is dependent on which game the user selects
 		m_cTriviaGame = new CTriviaGame (this);
+		m_dataCastManager = MainApplication.getDataCastManager ();
+		m_dataCastConsumer = new CDataCastConsumer ()
+		{
+		@Override
+		public void updateUIState ()
+			{
+			// Only update the UI if it is a state change
+			if (m_eConnectionState != this.getConnectionState ())
+				{
+				// Update our state
+				m_eConnectionState = this.getConnectionState ();
+				// Set our content view
+				chooseActivityContentView ();
+				}
+			}
+
+		@Override
+		public void onMessageReceived (CastDevice castDevice, String namespace, String message)
+			{
+			m_cTriviaGame.onMessageIn (message);
+			}
+		};
+		m_dataCastManager.reconnectSessionIfPossible ();   // Default is 10 seconds
+		}
+
+	private void chooseActivityContentView ()
+		{
+		// Set the activity layout dependant on our connected state
+		if (m_dataCastManager == null || !m_dataCastManager.isConnected ())
+			{
+			setContentView (R.layout.activity_ccltrivia);
+			}
+		else
+			{
+			switch (m_eConnectionState)
+				{
+				case E_CONNECTION_STATE_UNKNOWN:        // Unknown == disconnected as far as we care for now
+				case E_CONNECTION_STATE_DISCONNECTED:
+					setContentView (R.layout.activity_ccltrivia);
+					break;
+				case E_CONNECTION_STATE_CONNECTED:
+					setContentView (R.layout.activity_play_trivia_on);
+					break;
+				default:
+					Log.e (TAG, "Unhandled connection state...");
+					break;
+				}
+			}
 		}
 
 	@Override
 	public boolean onCreateOptionsMenu (Menu menu)
 		{
 		super.onCreateOptionsMenu (menu);
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater ().inflate (R.menu.menu_ccltrivia, menu);
-		MainApplication.getDataCastManager ().addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
+		m_mediaRouteMenuItem = m_dataCastManager.addMediaRouterButton (menu, R.id.media_route_menu_item); // This returns a pointer to the MenuItem that represents the Cast button
 		return true;
 		}
 
 	@Override
 	public boolean onOptionsItemSelected (MenuItem item)
 		{
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId ();
-		//noinspection SimplifiableIfStatement
-		switch (id)
+		switch (item.getItemId ())
 			{
 			case R.id.action_settings:
 				onSettingsSelected ();
@@ -118,17 +156,30 @@ public class CCLTriviaActivity
 	@Override
 	public void onResume ()
 		{
+		Log.d (TAG, "Entering onResume()");
+		m_dataCastManager = MainApplication.getDataCastManager ();
+		m_dataCastManager.addDataCastConsumer (m_dataCastConsumer);
+		m_dataCastManager.incrementUiCounter ();
 		super.onResume ();
-		MainApplication.getDataCastManager ();
-		MainApplication.getDataCastManager().incrementUiCounter ();
-		chooseActivityContentView ();
 		}
 
 	@Override
 	public void onPause ()
 		{
+		m_dataCastManager.decrementUiCounter ();
+		m_dataCastManager.removeDataCastConsumer (m_dataCastConsumer);
 		super.onPause ();
-		MainApplication.getDataCastManager().decrementUiCounter ();
+		}
+
+	@Override
+	protected void onDestroy ()
+		{
+		Log.d (TAG, "onDestroy is called");
+		if (null != m_dataCastManager)
+			{
+			m_dataCastManager.clearContext (this);
+			}
+		super.onDestroy ();
 		}
 
 	/**
@@ -138,12 +189,9 @@ public class CCLTriviaActivity
 	 */
 	public void updateUI (ETriviaGameStates state)
 		{
-		// Get all of our GUI elements
-		TextView tvPlayTitle = (TextView) findViewById (R.id.tvPlayTitle);
-		TextView tvQuestion = (TextView) findViewById (R.id.tvQuestion);
-		Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
-		RadioGroup rgAnswers = (RadioGroup) findViewById (R.id.radio_group_answers);
 		// TODO Add an onCheckedChangeListener to handle button graphical state?
+		// FIXME: There must be a better way to handle the UI state machine.
+		// Switch cases have parentheses so that they are individually scoped
 		switch (state)
 			{
 			case GET_CONFIG:
@@ -153,37 +201,112 @@ public class CCLTriviaActivity
 			case READY:
 				break;
 			case CONNECTED:
-				// Clear the display of UI elements
-				setAllUiElements_Visibility (View.INVISIBLE);
-				if (m_cTriviaPlayer.getWillHost ())
-					{
-					// Create the "host game" button
-					btnBeginNewRound.setText (getString (R.string.btn_text_host_game));
-					btnBeginNewRound.setOnClickListener (new View.OnClickListener ()
-					{
-					@Override
-					public void onClick (View view)
-						{
-						m_cTriviaGame.requestHost ();
-						}
-					});
-					AddButtonLayout (btnBeginNewRound, RelativeLayout.CENTER_IN_PARENT); // Put button in the center of the screen
-					btnBeginNewRound.setVisibility (View.VISIBLE);
-					}
-				else
-					{
-					m_cTriviaPlayer.setIsHosting (false);
-					tvQuestion.setText (getString (R.string.waiting_for_host));
-					tvQuestion.setVisibility (View.VISIBLE);
-					}
-				m_cTriviaGame.sendMessage (m_cTriviaGame.getOutMsg ());
-				break;
-			case HOSTING:
-				// Clear the display of UI elements
-				setAllUiElements_Visibility (View.INVISIBLE);
-				m_cTriviaPlayer.setIsHosting (true);
-				btnBeginNewRound.setText (getString (R.string.start_the_game));
+			{
+			// Clear the display of UI elements
+			setAllUiElements_Visibility (View.INVISIBLE);
+			if (m_cTriviaPlayer.getWillHost ())
+				{
+				Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
+				// Create the "host game" button
+				btnBeginNewRound.setText (getString (R.string.btn_text_host_game));
 				btnBeginNewRound.setOnClickListener (new View.OnClickListener ()
+				{
+				@Override
+				public void onClick (View view)
+					{
+					m_cTriviaGame.requestHost ();
+					}
+				});
+				AddButtonLayout (btnBeginNewRound, RelativeLayout.CENTER_IN_PARENT); // Put button in the center of the screen
+				btnBeginNewRound.setVisibility (View.VISIBLE);
+				}
+			else
+				{
+				m_cTriviaPlayer.setIsHosting (false);
+				TextView tvQuestion = (TextView) findViewById (R.id.tvQuestion);
+				tvQuestion.setText (getString (R.string.waiting_for_host));
+				tvQuestion.setVisibility (View.VISIBLE);
+				}
+			m_cTriviaGame.sendMessage (m_cTriviaGame.getOutMsg ());
+			break;
+			}
+			case HOSTING:
+			{
+			// Clear the display of UI elements
+			setAllUiElements_Visibility (View.INVISIBLE);
+			m_cTriviaPlayer.setIsHosting (true);
+			Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
+			btnBeginNewRound.setText (getString (R.string.start_the_game));
+			btnBeginNewRound.setOnClickListener (new View.OnClickListener ()
+			{
+			@Override
+			public void onClick (View view)
+				{
+				m_cTriviaGame.beginNewRound ();
+				}
+			});
+			AddButtonLayout (btnBeginNewRound, RelativeLayout.CENTER_IN_PARENT); // Put button in the center of the screen
+			btnBeginNewRound.setVisibility (View.VISIBLE);
+			break;
+			}
+			case HOSTED:    // The game is already hosted, waiting to start
+			{
+			// Clear the display of UI elements
+			setAllUiElements_Visibility (View.INVISIBLE);
+			m_cTriviaPlayer.setIsHosting (false);
+			TextView tvPlayTitle = (TextView) findViewById (R.id.tvPlayTitle);
+			tvPlayTitle.setText (getString (R.string.waiting_on_host));
+			tvPlayTitle.setVisibility (View.VISIBLE);
+			break;
+			}
+			case GOT_Q_AND_A:
+			{
+			// Get all of our GUI elements
+			TextView tvPlayTitle = (TextView) findViewById (R.id.tvPlayTitle);
+			TextView tvQuestion = (TextView) findViewById (R.id.tvQuestion);
+			Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
+			RadioGroup rgAnswers = (RadioGroup) findViewById (R.id.radio_group_answers);
+			setAllUiElements_Visibility (View.INVISIBLE);       // Clear the display of UI elements
+			tvPlayTitle.setText (getString (R.string.select_an_answer));       // Create the title text
+			tvPlayTitle.setVisibility (View.VISIBLE);           // Make it visible
+			tvQuestion.setText (m_cTriviaGame.getQuestion ());   // Create the question text
+			tvQuestion.setVisibility (View.VISIBLE);            // Make it visible
+			ArrayList<String> answers = m_cTriviaGame.getAnswers ();
+			rgAnswers.removeAllViews ();                        // Remove any pre-existing radio buttons
+			for (int i = 0; i < answers.size (); ++i)            // Add a radio button for each available answer
+				{
+				rgAnswers.addView (new CAnswerRadioButton (this, i, answers.get (i)));
+				}
+			rgAnswers.setVisibility (View.VISIBLE);         // Make sure we see the buttons
+			if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
+				{
+				btnBeginNewRound.setText (getString (R.string.finish_round));
+				btnBeginNewRound.setVisibility (View.VISIBLE);
+				btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
+				{
+				@Override
+				public void onClick (View view)
+					{
+					m_cTriviaGame.endRound ();
+					}
+				});
+				AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the beginning of the screen
+				}
+			break;
+			}
+			case ROUND_WIN:
+			{
+			// Clear the display of UI elements
+			setAllUiElements_Visibility (View.INVISIBLE);
+			TextView tvPlayTitle = (TextView) findViewById (R.id.tvPlayTitle);
+			tvPlayTitle.setText (getString (R.string.you_win));
+			tvPlayTitle.setVisibility (View.VISIBLE);
+			if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
+				{
+				Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
+				btnBeginNewRound.setText (getString (R.string.btn_new_round));
+				btnBeginNewRound.setVisibility (View.VISIBLE);
+				btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
 				{
 				@Override
 				public void onClick (View view)
@@ -191,84 +314,34 @@ public class CCLTriviaActivity
 					m_cTriviaGame.beginNewRound ();
 					}
 				});
-				AddButtonLayout (btnBeginNewRound, RelativeLayout.CENTER_IN_PARENT); // Put button in the center of the screen
-				btnBeginNewRound.setVisibility (View.VISIBLE);
-				break;
-			case HOSTED:    // The game is already hosted, waiting to start
-				// Clear the display of UI elements
-				setAllUiElements_Visibility (View.INVISIBLE);
-				m_cTriviaPlayer.setIsHosting (false);
-				tvPlayTitle.setText (getString (R.string.waiting_on_host));
-				tvPlayTitle.setVisibility (View.VISIBLE);
-				break;
-			case GOT_Q_AND_A:
-				setAllUiElements_Visibility (View.INVISIBLE);       // Clear the display of UI elements
-				tvPlayTitle.setText (getString (R.string.select_an_answer));       // Create the title text
-				tvPlayTitle.setVisibility (View.VISIBLE);           // Make it visible
-				tvQuestion.setText (m_cTriviaGame.getQuestion ());   // Create the question text
-				tvQuestion.setVisibility (View.VISIBLE);            // Make it visible
-				ArrayList<String> answers = m_cTriviaGame.getAnswers ();
-				rgAnswers.removeAllViews ();                        // Remove any pre-existing radio buttons
-				for (int i = 0; i < answers.size (); ++i)            // Add a radio button for each available answer
-					{
-					rgAnswers.addView (new CAnswerRadioButton (this, i, answers.get (i)));
-					}
-				rgAnswers.setVisibility (View.VISIBLE);         // Make sure we see the buttons
-				if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
-					{
-					btnBeginNewRound.setText (getString (R.string.finish_round));
-					btnBeginNewRound.setVisibility (View.VISIBLE);
-					btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
-					{
-					@Override
-					public void onClick (View view)
-						{
-						m_cTriviaGame.endRound ();
-						}
-					});
-					AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the beginning of the screen
-					}
-				break;
-			case ROUND_WIN:
-				// Clear the display of UI elements
-				setAllUiElements_Visibility (View.INVISIBLE);
-				tvPlayTitle.setText (getString (R.string.you_win));
-				tvPlayTitle.setVisibility (View.VISIBLE);
-				if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
-					{
-					btnBeginNewRound.setText (getString (R.string.btn_new_round));
-					btnBeginNewRound.setVisibility (View.VISIBLE);
-					btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
-					{
-					@Override
-					public void onClick (View view)
-						{
-						m_cTriviaGame.beginNewRound ();
-						}
-					});
-					AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the bottom of the screen
-					}
-				break;
+				AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the bottom of the screen
+				}
+			break;
+			}
 			case ROUND_LOSE:
-				// Clear the display of UI elements
-				setAllUiElements_Visibility (View.INVISIBLE);
-				tvPlayTitle.setText (getString (R.string.you_lose));
-				tvPlayTitle.setVisibility (View.VISIBLE);
-				if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
+			{
+			// Clear the display of UI elements
+			setAllUiElements_Visibility (View.INVISIBLE);
+			TextView tvPlayTitle = (TextView) findViewById (R.id.tvPlayTitle);
+			tvPlayTitle.setText (getString (R.string.you_lose));
+			tvPlayTitle.setVisibility (View.VISIBLE);
+			if (m_cTriviaPlayer.isHosting ())               // Host gets to short-circuit the question
+				{
+				Button btnBeginNewRound = (Button) findViewById (R.id.btn_begin_new_round);
+				btnBeginNewRound.setText (getString (R.string.btn_new_round));
+				btnBeginNewRound.setVisibility (View.VISIBLE);
+				btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
+				{
+				@Override
+				public void onClick (View view)
 					{
-					btnBeginNewRound.setText (getString (R.string.btn_new_round));
-					btnBeginNewRound.setVisibility (View.VISIBLE);
-					btnBeginNewRound.setOnClickListener (new View.OnClickListener ()    // TODO: Investigate if we have to remove old listeners here (possible leak?)
-					{
-					@Override
-					public void onClick (View view)
-						{
-						m_cTriviaGame.beginNewRound ();
-						}
-					});
-					AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the bottom of the screen
+					m_cTriviaGame.beginNewRound ();
 					}
-				break;
+				});
+				AddButtonLayout (btnBeginNewRound, RelativeLayout.ALIGN_BASELINE); // Put button at the bottom of the screen
+				}
+			break;
+			}
 			case QUIT:
 				break;
 			case ERROR:
@@ -288,11 +361,14 @@ public class CCLTriviaActivity
 	private void setAllUiElements_Visibility (int visibility)
 		{
 		RelativeLayout relativeLayout = (RelativeLayout) findViewById (R.id.rl_trivia_main_on);
-		int numViewElements = relativeLayout.getChildCount ();
-		for (int i = 0; i < numViewElements; ++i)
+		if (relativeLayout != null)
 			{
-			relativeLayout.getChildAt (i)
-				.setVisibility (visibility);
+			int numViewElements = relativeLayout.getChildCount ();
+			for (int i = 0; i < numViewElements; ++i)
+				{
+				relativeLayout.getChildAt (i)
+					.setVisibility (visibility);
+				}
 			}
 		}
 
@@ -314,7 +390,7 @@ public class CCLTriviaActivity
 		{
 		try
 			{
-			MainApplication.getDataCastManager().sendDataMessage (message, getString (R.string.cast_namespace));
+			m_dataCastManager.sendDataMessage (message, getString (R.string.cast_namespace));
 			}
 		catch (IOException e)
 			{
@@ -418,19 +494,6 @@ public class CCLTriviaActivity
 				m_cTriviaGame.sendMessage (m_cTriviaPlayer.getAnswer ());                          // Send the answer to the game server
 				}
 			});
-			}
-		}
-
-	private void chooseActivityContentView ()
-		{
-		// Set the activity layout dependant on our connected state
-		if (MainApplication.getDataCastManager () == null || MainApplication.getDataCastManager ().isConnected () == false)
-			{
-			setContentView (R.layout.activity_ccltrivia);
-			}
-		else
-			{
-			setContentView (R.layout.activity_play_trivia_on);
 			}
 		}
 	}

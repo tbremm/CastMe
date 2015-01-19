@@ -20,22 +20,25 @@
 	<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version"/>
-	<activity
-			android:name="com.adventurpriseme.castme.MainActivity"
-			android:label="@string/app_name">
+
+		<!-- Splash Screen activity must be launcher -->
+		<activity
+			android:name="com.adventurpriseme.castme.CSplashScreen"
+			android:label="CastMe"
+			android:screenOrientation="portrait"
+			android:theme="@android:style/Theme.Black.NoTitleBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN"/>
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
+
+		<!-- Main Activity -->
 		<activity
-			android:name="com.adventurpriseme.castme.PlayTriviaActivity"
-			android:label="@string/title_activity_play_trivia"
-			android:parentActivityName="com.adventurpriseme.castme.MainActivity">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.adventurpriseme.castme.MainActivity"/>
+			android:name="com.adventurpriseme.castme.MainActivity"
+			android:label="@string/app_name">
 		</activity>
+
 		<activity
 			android:name="com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity"
 			android:label="@string/ccl_trivia"
@@ -44,6 +47,7 @@
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value="com.adventurpriseme.castme.MainActivity"/>
 		</activity>
+
 		<activity
 			android:name=".TriviaGame.TriviaPrefsActivity"
 			android:label="@string/title_activity_trivia_prefs"

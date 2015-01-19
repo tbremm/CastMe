@@ -81,4 +81,6 @@
 	<string name="failed_to_perform_action">Sorry, ran into issues performing the task you wanted</string>
 	<string name="oops">Oops</string>
 	<string name="about_castme_games">About CastMe Games</string>
+	<string name="www_adventurpriseme_com">www.adventurpriseme.com</string>
+	<string name="cd_castme_logo">Cast me logo</string>
 </resources>

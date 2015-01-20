@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity;
+
 /**
  * Class used to display a splash screen.
  * <p/>
@@ -30,8 +32,8 @@ public class CSplashScreen
 		@Override
 		public void run ()
 			{
-			// This starts the main activity once the timer is up
-			Intent intent = new Intent (CSplashScreen.this, MainActivity.class);
+			// This starts the trivia activity once the timer is up
+			Intent intent = new Intent (CSplashScreen.this, CCLTriviaActivity.class);
 			startActivity (intent);
 			// Close this activity
 			finish ();

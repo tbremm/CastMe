@@ -16,7 +16,6 @@ import java.util.Map;
  * Copyright 11/19/2014 adventurpriseme.com
  */
 public class CTriviaPlayer
-	implements IPerson
 	{
 	// Data members
 	// TODO: Note, when adding a new attribute/config setting, update the ctor and getPlayerInfo() accordingly!
@@ -27,8 +26,8 @@ public class CTriviaPlayer
 	private boolean m_bEnablePostRoundTimer = true;
 	private int     m_nScore                = 0;
 	private String  m_strAnswer             = "";
-	private Map    m_mapPlayerInfo = new HashMap ();
-	private String m_UID           = "";
+	private Map     m_mapPlayerInfo         = new HashMap ();
+	private String  m_UID                   = "";
 	private Activity m_activity;
 	// TODO: migrate all config settings into the map
 
@@ -76,7 +75,6 @@ public class CTriviaPlayer
 	 *
 	 * @return a string containing the person's name.
 	 */
-	@Override
 	public String getName ()
 		{
 		return m_strName;
@@ -88,7 +86,6 @@ public class CTriviaPlayer
 	 * @param strName
 	 * 	(required)  The new player name
 	 */
-	@Override
 	public void setName (String strName)
 		{
 		m_strName = strName;

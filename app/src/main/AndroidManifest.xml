@@ -2,22 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.adventurpriseme.castme">
 
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission android:name="android.permission.INTERNET"/>
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
 	<uses-feature
 		android:name="android.hardware.wifi"
-		android:required="true" >
+		android:required="true">
 	</uses-feature>
 
 	<application
 		android:name=".MainApplication"
 		android:allowBackup="true"
-	    android:icon="@drawable/ic_castme_logo"
+		android:icon="@drawable/ic_castme_logo"
 		android:label="@string/app_name"
-	    android:theme="@style/Theme.AppCompat">
-	<meta-data
+		android:theme="@style/Theme.AppCompat">
+		<meta-data
 			android:name="com.google.android.gms.version"
 			android:value="@integer/google_play_services_version"/>
 
@@ -33,28 +33,19 @@
 			</intent-filter>
 		</activity>
 
-		<!-- Main Activity -->
-		<activity
-			android:name="com.adventurpriseme.castme.MainActivity"
-			android:label="@string/app_name">
-		</activity>
-
+		<!-- Main Activity (CCL Trivia) -->
 		<activity
 			android:name="com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity"
-			android:label="@string/ccl_trivia"
-			android:parentActivityName="com.adventurpriseme.castme.MainActivity">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.adventurpriseme.castme.MainActivity"/>
+			android:label="@string/app_name">
 		</activity>
 
 		<activity
 			android:name=".TriviaGame.TriviaPrefsActivity"
 			android:label="@string/title_activity_trivia_prefs"
-			android:parentActivityName="com.adventurpriseme.castme.PlayTriviaActivity">
+			android:parentActivityName="com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity">
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.adventurpriseme.castme.PlayTriviaActivity"/>
+				android:value="com.adventurpriseme.castme.CCLTriviaActivity.CCLTriviaActivity"/>
 		</activity>
 	</application>
 

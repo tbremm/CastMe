@@ -21,7 +21,7 @@ import com.adventurpriseme.castme.CAboutDialog;
 import com.adventurpriseme.castme.CTriviaPlayer;
 import com.adventurpriseme.castme.MainApplication;
 import com.adventurpriseme.castme.R;
-import com.adventurpriseme.castme.TheCastManager.CDataCastConsumer;
+import com.adventurpriseme.castme.TriviaDataCastConsumer.CDataCastConsumer;
 import com.adventurpriseme.castme.TriviaGame.CTriviaGame;
 import com.adventurpriseme.castme.TriviaGame.ETriviaGameStates;
 import com.adventurpriseme.castme.TriviaGame.ITriviaGame;

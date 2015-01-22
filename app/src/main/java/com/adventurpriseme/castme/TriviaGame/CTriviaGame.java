@@ -2,8 +2,6 @@ package com.adventurpriseme.castme.TriviaGame;
 
 import android.util.Log;
 
-import com.adventurpriseme.castme.GameInstanceMgr.IGamesMgr2Game;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -40,17 +38,16 @@ import static com.adventurpriseme.castme.TriviaGame.ETriviaMessagesToServer.MSG_
  * Copyright 12/11/2014 adventurpriseme.com
  */
 public class CTriviaGame
-	implements IGamesMgr2Game
 	{
 	private static final String[] Q_AND_A_STRING_ARRAY = new String[5];   // TODO: Don't hardcode this size
 	// Private data members
 	private final        String   TAG                  = "CTriviaGame";
 	// The caller's context
-	private ITriviaGame m_activity;
-	private String             m_strMsgIn;
-	private ArrayList<String>  m_strMsgOut;
-	private String             m_question;
-	private ArrayList<String>  m_answers;
+	private ITriviaGame       m_activity;
+	private String            m_strMsgIn;
+	private ArrayList<String> m_strMsgOut;
+	private String            m_question;
+	private ArrayList<String> m_answers;
 	private ETriviaGameStates m_eTriviaGameState;
 
 	public CTriviaGame (ITriviaGame iTriviaGame)
@@ -111,23 +108,23 @@ public class CTriviaGame
 		switch (command)
 			{
 			case MSG_CONNECTED:
+			{
+			// Send config values and currently known UID. This UID will be updated.
+			m_strMsgOut.addAll (getPlayerConfigKeyValues ());
+			// We expect a unique player ID here (it is currently our senderID)
+			if (inMsgSplit.size () > 1)
 				{
-				// Send config values and currently known UID. This UID will be updated.
-				m_strMsgOut.addAll (getPlayerConfigKeyValues ());
-				// We expect a unique player ID here (it is currently our senderID)
-				if (inMsgSplit.size () > 1)
+				String[] dataSplit = inMsgSplit.get (1)
+					                     .split (MSG_SPLIT_KEY_VALUE.toString ());
+				if (dataSplit.length == 2 && dataSplit[0].equals (MSG_KEY_UID.toString ()))
 					{
-					String[] dataSplit = inMsgSplit.get (1)
-						                     .split (MSG_SPLIT_KEY_VALUE.toString ());
-					if (dataSplit.length == 2 && dataSplit[0].equals (MSG_KEY_UID.toString ()))
-						{
-						m_activity.getTriviaPlayer ()
-							.setUID (dataSplit[1]);
-						}
+					m_activity.getTriviaPlayer ()
+						.setUID (dataSplit[1]);
 					}
-				m_activity.updateUI (CONNECTED);
-				break;
 				}
+			m_activity.updateUI (CONNECTED);
+			break;
+			}
 			case MSG_HOST:
 			{
 			m_activity.updateUI (HOSTING);
@@ -172,7 +169,7 @@ public class CTriviaGame
 				}
 			m_activity.updateUI (GOT_Q_AND_A);
 			break;
-				}
+			}
 			case MSG_WIN:
 			{
 			m_activity.updateUI (ROUND_WIN);

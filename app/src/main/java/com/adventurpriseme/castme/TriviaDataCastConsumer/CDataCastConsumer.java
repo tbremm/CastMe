@@ -1,4 +1,4 @@
-package com.adventurpriseme.castme.TheCastManager;
+package com.adventurpriseme.castme.TriviaDataCastConsumer;
 
 import android.util.Log;
 
@@ -11,10 +11,11 @@ import com.google.sample.castcompanionlibrary.cast.callbacks.DataCastConsumerImp
  * Created by Timothy on 1/7/2015.
  * Copyright 1/7/2015 adventurpriseme.com
  */
-public class CDataCastConsumer extends DataCastConsumerImpl
+public class CDataCastConsumer
+	extends DataCastConsumerImpl
 	{
-	private static final String TAG = "CDataCastConsumer";
-	private eConnectionStates m_eConnectionState = eConnectionStates.E_CONNECTION_STATE_UNKNOWN;    // Maintain our state so that we know if we want to update the layout
+	private static final String            TAG                = "CDataCastConsumer";
+	private              eConnectionStates m_eConnectionState = eConnectionStates.E_CONNECTION_STATE_UNKNOWN;    // Maintain our state so that we know if we want to update the layout
 
 	public enum eConnectionStates
 		{
@@ -74,7 +75,7 @@ public class CDataCastConsumer extends DataCastConsumerImpl
 		}
 
 	@Override
-	public void onMessageSendFailed(Status status)
+	public void onMessageSendFailed (Status status)
 		{
 		Log.e (TAG, "onMessageSendFailed with message: " + status.getStatusMessage ());
 		}

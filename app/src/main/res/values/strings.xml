@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<!-- Chromecast specific strings -->
+	<string name="cast_namespace">urn:x-cast:com.adventurpriseme.castme</string>
+	<string name="cast_app_id">53EAA363</string>
+	<string name="cast_app_id_debug">21857AF0</string>
 
+	<!-- Trivia strings -->
 	<string name="app_name">TriviaCast</string>
 	<string name="hello_world">Hello world!</string>
 	<string name="action_settings">Settings</string>
@@ -43,8 +48,6 @@
 	<string name="select_an_answer">Select an answer!</string>
 	<string name="pref_title_player_uid">Unique ID</string>
 	<string name="config_host_postround_timer_enable">pref_host_checkbox_postround_timer</string>
-	<string name="cast_namespace">urn:x-cast:com.adventurpriseme.castme</string>
-	<string name="cast_app_id">53EAA363</string>
 	<string name="ccl_trivia">CCL Trivia</string>
 
 	<!-- Preferences -->

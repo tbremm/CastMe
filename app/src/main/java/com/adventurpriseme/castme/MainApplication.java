@@ -22,7 +22,7 @@ public class MainApplication extends Application
 	public void onCreate ()
 		{
 		super.onCreate ();
-		sm_strApplicationId = getString (R.string.cast_app_id);
+		sm_strApplicationId = getString (R.string.cast_app_id_debug);
 		initCastManager ();
 		Utils.saveFloatToPreference(getApplicationContext (), DataCastManager.PREFS_KEY_VOLUME_INCREMENT, (float) VOLUME_INCREMENT);
 		}
